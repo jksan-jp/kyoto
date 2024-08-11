@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Minimal ECS Fargate Cluster with VPC and Subnets
+Description: ECS Fargate with ALB and VPC
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -88,6 +88,66 @@ Resources:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
 
+  # ALB Security Group
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP traffic to ALB
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: kyoto-alb-sg
+
+  # ALB
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: kyoto-alb
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: kyoto
+
+  # ALB Target Group
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VPC
+      Port: 80
+      Protocol: HTTP
+      TargetType: ip
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: 200
+      Tags:
+        - Key: Name
+          Value: kyoto-target-group
+
+  # ALB Listener
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+
   # ECS Cluster
   ECSCluster:
     Type: AWS::ECS::Cluster
@@ -97,7 +157,7 @@ Resources:
         - Key: Name
           Value: kyoto
 
-  # Task Definition
+  # ECS Task Definition
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -110,7 +170,7 @@ Resources:
       ExecutionRoleArn: !GetAtt ECSExecutionRole.Arn
       ContainerDefinitions:
         - Name: kyoto-container
-          Image: <YOUR_ECR_IMAGE_URI>
+          Image: IMAGE_URI
           Essential: true
           PortMappings:
             - ContainerPort: 8080
@@ -138,6 +198,12 @@ Resources:
             - !Ref PublicSubnet1
             - !Ref PublicSubnet2
           AssignPublicIp: ENABLED
+          SecurityGroups:
+            - !Ref ALBSecurityGroup
+      LoadBalancers:
+        - ContainerName: kyoto-container
+          ContainerPort: 8080
+          TargetGroupArn: !Ref TargetGroup
       Tags:
         - Key: Name
           Value: kyoto
@@ -176,6 +242,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                   - s3:GetObject
+                  - ecr:GetAuthorizationToken
                 Resource: '*'
       Tags:
         - Key: Name
