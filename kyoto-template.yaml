@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Minimal ECS Fargate Cluster with VPC and Subnets
 
+Metadata:
+  AWS::CloudFormation::Interface:
+    Tags:
+      - Key: Name
+        Value: kyoto
+
 Resources:
   # VPC
   VPC:
