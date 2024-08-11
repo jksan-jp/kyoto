@@ -187,6 +187,7 @@ Resources:
   # ECS Fargate Service
   ECSService:
     Type: AWS::ECS::Service
+    DependsOn: Listener # https://houdoukyokucho.com/2022/07/14/post-4158/
     Properties:
       Cluster: !Ref ECSCluster
       TaskDefinition: !Ref TaskDefinition
