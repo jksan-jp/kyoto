@@ -125,7 +125,7 @@ Resources:
       Port: 80
       Protocol: HTTP
       TargetType: ip
-      HealthCheckIntervalSeconds: 60
+      HealthCheckIntervalSeconds: 30
       HealthCheckPath: /status
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
@@ -180,6 +180,14 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: kyoto
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl -f http://localhost:8080/status || exit 1
+            Interval: 30
+            Timeout: 5
+            Retries: 3
+            StartPeriod: 0
       Tags:
         - Key: Name
           Value: kyoto
