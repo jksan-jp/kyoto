@@ -125,7 +125,7 @@ Resources:
       Port: 80
       Protocol: HTTP
       TargetType: ip
-      HealthCheckIntervalSeconds: 30
+      HealthCheckIntervalSeconds: 60
       HealthCheckPath: /status
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
@@ -205,6 +205,9 @@ Resources:
         - ContainerName: kyoto-container
           ContainerPort: 8080
           TargetGroupArn: !Ref TargetGroup
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
       Tags:
         - Key: Name
           Value: kyoto
