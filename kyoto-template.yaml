@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: ECS Fargate with ALB and VPC
 
 Metadata:
+  TimeoutInMinutes: 10
   AWS::CloudFormation::Interface:
     Tags:
       - Key: Name
@@ -131,7 +132,7 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
       Matcher:
         HttpCode: 200
       Tags:
