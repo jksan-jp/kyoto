@@ -10,6 +10,8 @@ import (
 func main() {
 	e := echo.New()
 
+	e.HideBanner = true
+
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 

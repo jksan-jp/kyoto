@@ -1,13 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: ECS Fargate with ALB and VPC
 
-Metadata:
-  TimeoutInMinutes: 10
-  AWS::CloudFormation::Interface:
-    Tags:
-      - Key: Name
-        Value: kyoto
-
 Resources:
   # VPC
   VPC:
@@ -177,20 +170,22 @@ Resources:
           PortMappings:
             - ContainerPort: 8080
               HostPort: 8080
+              Protocol: tcp
           LogConfiguration:
             LogDriver: awslogs
             Options:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: kyoto
-          HealthCheck:
-            Command:
-              - CMD-SHELL
-              - curl -f http://localhost:8080/status || exit 1
-            Interval: 30
-            Timeout: 5
-            Retries: 3
-            StartPeriod: 0
+          # Dockerコンテナ上でHealthCheckするのと同じなので、していないのであれば外してOK
+          # HealthCheck:
+          #   Command:
+          #     - CMD-SHELL
+          #     - curl -f http://localhost:8080/status || exit 1
+          #   Interval: 30 # (default:30)
+          #   Retries: 3 # (default:3)
+          #   StartPeriod: 0
+          #   Timeout: 5 # (default:5)
       Tags:
         - Key: Name
           Value: kyoto
@@ -241,6 +236,8 @@ Resources:
   # Log Group
   LogGroup:
     Type: AWS::Logs::LogGroup
+    DeletionPolicy: "Delete" # default: Delete
+    UpdateReplacePolicy: "Retain" # default: Delete
     Properties:
       LogGroupName: /ecs/kyoto
       RetentionInDays: 7
