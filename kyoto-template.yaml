@@ -165,7 +165,7 @@ Resources:
       ExecutionRoleArn: !GetAtt ECSExecutionRole.Arn
       ContainerDefinitions:
         - Name: kyoto-container
-          Image: 802566990050.dkr.ecr.ap-northeast-1.amazonaws.com/kyoto:latest
+          Image: <image>
           Essential: true
           PortMappings:
             - ContainerPort: 8080
