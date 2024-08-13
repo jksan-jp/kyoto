@@ -23,7 +23,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: kyoto-public-subnet-1
+          Value: kyoto
 
   # Public Subnet 2
   PublicSubnet2:
@@ -35,7 +35,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: kyoto-public-subnet-2
+          Value: kyoto
 
   # Internet Gateway
   InternetGateway:
@@ -95,7 +95,7 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: kyoto-alb-sg
+          Value: kyoto
 
   # ALB
   LoadBalancer:
@@ -130,7 +130,7 @@ Resources:
         HttpCode: 200
       Tags:
         - Key: Name
-          Value: kyoto-target-group
+          Value: kyoto
 
   # ALB Listener
   Listener:
@@ -231,7 +231,7 @@ Resources:
           SourceSecurityGroupId: !Ref ALBSecurityGroup
       Tags:
         - Key: Name
-          Value: kyoto-ecs-sg
+          Value: kyoto
 
   # Log Group
   LogGroup:
