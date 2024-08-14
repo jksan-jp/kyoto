@@ -10,7 +10,7 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # Public Subnet 1
@@ -22,7 +22,7 @@ Resources:
       AvailabilityZone: !Select [0, !GetAZs ]
       MapPublicIpOnLaunch: true
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # Public Subnet 2
@@ -34,7 +34,7 @@ Resources:
       AvailabilityZone: !Select [1, !GetAZs ]
       MapPublicIpOnLaunch: true
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # Internet Gateway
@@ -42,7 +42,7 @@ Resources:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # Attach Internet Gateway to VPC
@@ -58,7 +58,7 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # Public Route
@@ -94,7 +94,7 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ALB
@@ -108,7 +108,7 @@ Resources:
       SecurityGroups:
         - !Ref ALBSecurityGroup
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ALB Target Group
@@ -129,7 +129,7 @@ Resources:
       Matcher:
         HttpCode: 200
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ALB Listener
@@ -149,7 +149,7 @@ Resources:
     Properties:
       ClusterName: kyoto-cluster
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ECS Task Definition
@@ -187,7 +187,7 @@ Resources:
           #   StartPeriod: 0
           #   Timeout: 5 # (default:5)
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ECS Fargate Service
@@ -215,7 +215,7 @@ Resources:
         MaximumPercent: 200
         MinimumHealthyPercent: 100
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ECSサービスのセキュリティグループ
@@ -230,7 +230,7 @@ Resources:
           ToPort: 8080
           SourceSecurityGroupId: !Ref ALBSecurityGroup
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # Log Group
@@ -242,7 +242,7 @@ Resources:
       LogGroupName: /ecs/kyoto
       RetentionInDays: 7
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
   # ECS Execution Role
@@ -272,7 +272,7 @@ Resources:
                   - ecr:GetAuthorizationToken
                 Resource: '*'
       Tags:
-        - Key: Name
+        - Key: Stack
           Value: kyoto
 
 Outputs:
