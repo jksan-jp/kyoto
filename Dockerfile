@@ -9,7 +9,7 @@ RUN go mod tidy
 RUN go build -o kyoto
 
 # Step 2: Create a lightweight image with the compiled binary
-FROM alpine:3.18.8
+FROM alpine:3.20.2
 
 WORKDIR /app
 
